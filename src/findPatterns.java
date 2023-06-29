@@ -79,7 +79,7 @@ public class findPatterns {
 
     public static void main(String[] args) {
         createLogger();
-        String pathFile = "src\\json_text2.txt";
+        String pathFile = "src\\json_text.txt";
 //        String text = "[{\"фамилия\":\"Иванов\",\"оценка\":\"5\",\"предмет\":\"Математика\"}," +
 //                "{\"фамилия\":\"Петрова\",\"оценка\":\"4\",\"предмет\":\"Информатика\"}," +
 //                "{\"фамилия\":\"Краснов\",\"оценка\":\"5\",\"предмет\":\"Физика\"}]";
