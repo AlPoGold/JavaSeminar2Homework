@@ -1,25 +1,44 @@
-import java.io.File;
-import java.io.FileWriter;
+import java.io.*;
 import java.util.Scanner;
 import java.util.regex.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.io.IOException;
-import java.io.BufferedReader;
-import java.util.stream.Collectors;
-import java.io.FileReader;
-
+import java.util.logging.FileHandler;
+import java.util.logging.Handler;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 
 
 public class findPatterns {
+    static Logger logger;
+    private static void createLogger(){
+        logger = Logger.getAnonymousLogger();
+        FileHandler fileHandler = null;
+        try{
+            fileHandler = new FileHandler("src/logFindPatterns.txt", true);
+            logger.addHandler(fileHandler);
+            SimpleFormatter formatter = new SimpleFormatter();
+
+            if (fileHandler != null) {
+                fileHandler.setFormatter(formatter);
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    private static void closeLogger(){
+        for(Handler handler : logger.getHandlers()){
+            handler.close();
+        }
+    }
 
     public static String[] findSurname(String text) {
         List<String> surnames = new ArrayList<>();
         Pattern pattern = Pattern.compile("\"фамилия\":\"([^\"]+)\"");
         Matcher matcher = pattern.matcher(text);
         while (matcher.find()) {
-            System.out.println(matcher.group(1));
             surnames.add(matcher.group(1));
         }
         return surnames.toArray(new String[0]);
@@ -44,40 +63,45 @@ public class findPatterns {
         return subjects.toArray(new String[0]);
     }
 
-    public static String readFile(String filePath) {
-        String content = "";
-        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
-            String line;
 
-            while ((line = reader.readLine()) != null) {
-                content += line;
+    public static String readFile(String pathFile){
+        StringBuilder content = new StringBuilder();
+        File file = new File(pathFile);
+        try(Scanner scan = new Scanner(file)){
+            while(scan.hasNextLine()){
+                content.append(scan.nextLine());
             }
-
-        } catch (IOException e) {
+        }catch(Exception e){
             e.printStackTrace();
         }
-        return content;
+        return content.toString();
     }
 
     public static void main(String[] args) {
-        String pathFile = "src\\json_text.txt";
+        createLogger();
+        String pathFile = "src\\json_text2.txt";
 //        String text = "[{\"фамилия\":\"Иванов\",\"оценка\":\"5\",\"предмет\":\"Математика\"}," +
 //                "{\"фамилия\":\"Петрова\",\"оценка\":\"4\",\"предмет\":\"Информатика\"}," +
 //                "{\"фамилия\":\"Краснов\",\"оценка\":\"5\",\"предмет\":\"Физика\"}]";
 
         String text = readFile(pathFile);
+        System.out.println(text);
         String pathFileAnswer = "src\\answer.txt";
-        try(FileWriter surnameContent = new FileWriter(pathFileAnswer)){
+        try(FileWriter content = new FileWriter(pathFileAnswer)){
             String[] surnames = findSurname(text);
             String[] scores = findScore(text);
             String[] subjects = findSubject(text);
             for (int i = 0; i < surnames.length; i++) {
-                surnameContent.write("Студент " + surnames[i] + " получил " + scores[i] + " по предмету " + subjects[i] + ".");
-                surnameContent.write("\n");
-                surnameContent.flush();
+                content.write("Студент " + surnames[i] + " получил " + scores[i] + " по предмету " + subjects[i] + ".");
+                content.write("\n");
+                content.flush();
             }
+            logger.info("New file is written successfully");
         }catch(Exception e){
+            logger.warning("Something has gone wrong");
             e.printStackTrace();
         }
+        closeLogger();
+
     }
 }

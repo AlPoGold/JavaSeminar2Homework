@@ -24,7 +24,7 @@ public class ex2 {
         logger = Logger.getAnonymousLogger();
         FileHandler fileHandler = null;
         try{
-            fileHandler = new FileHandler("src/log.txt", true);
+            fileHandler = new FileHandler("src/logEx2.txt", true);
             logger.addHandler(fileHandler);
             SimpleFormatter formatter = new SimpleFormatter();
             fileHandler.setFormatter(formatter);
