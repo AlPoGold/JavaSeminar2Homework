@@ -1,0 +1,2 @@
+июн. 29, 2023 1:49:01 PM findPatterns main
+INFO: New file is written successfully
